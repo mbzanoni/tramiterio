@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tramiterío — Calculadora de Impresión 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FFFDF7;
+    --cream2: #FFF8EC;
+    --orange: #FF7A2F;
+    --orange-light: #FFE4D0;
+    --orange-mid: #FFB380;
+    --brown: #7A3B1E;
+    --brown-light: #C4845A;
+    --green: #4CAF50;
+    --green-light: #E8F5E9;
+    --red: #E53935;
+    --red-light: #FFEBEE;
+    --yellow: #FFC107;
+    --yellow-light: #FFF8E1;
+    --gray: #9E9E9E;
+    --gray-light: #F5F5F5;
+    --text: #2D1B0E;
+    --text-muted: #8B6E5A;
+    --border: #E8D5C4;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(122,59,30,0.08);
+    --shadow-md: 0 4px 24px rgba(122,59,30,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--orange);
+    padding: 1.5rem 2rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 18px;
+    background: var(--cream);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .header-cats {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  }
+  .header-cats span { display: inline-block; animation: wobble 3s ease-in-out infinite; }
+  .header-cats span:nth-child(2) { animation-delay: 0.5s; }
+  .header-cats span:nth-child(3) { animation-delay: 1s; }
+  @keyframes wobble {
+    0%,100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+  .site-title {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.5px;
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.12);
+  }
+  .site-subtitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.88);
+    font-weight: 600;
+    margin-top: 0.15rem;
+    margin-bottom: 0.8rem;
+  }
+
+  /* LAYOUT */
+  .main {
+    max-width: 760px;
+    margin: 2rem auto;
+    padding: 0 1.25rem;
+  }
+
+  /* SECTION CARDS */
+  .card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1.5px dashed var(--border);
+  }
+  .card-icon { font-size: 1.4rem; }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--brown);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .card-meme {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    font-size: 1.5rem;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+  .g3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+  .g4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+  @media (max-width: 540px) {
+    .g2,.g3,.g4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 360px) {
+    .g2,.g3,.g4 { grid-template-columns: 1fr; }
+  }
+
+  /* FIELDS */
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .field input[type="number"],
+  .field select {
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    color: var(--text);
+    width: 100%;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--orange);
+    background: #fff;
+  }
+  .field select { cursor: pointer; }
+
+  /* SEPARATOR */
+  .sep {
+    height: 1.5px;
+    background: repeating-linear-gradient(90deg, var(--border) 0 8px, transparent 8px 14px);
+    margin: 0.9rem 0;
+  }
+
+  /* TOGGLE ROWS */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .toggle-row input[type="checkbox"] {
+    width: 17px; height: 17px;
+    cursor: pointer;
+    accent-color: var(--orange);
+  }
+  .toggle-row label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .toggle-row .cat-label { font-size: 1rem; margin-left: 2px; }
+  .collapsible { display: none; margin-top: 8px; }
+  .collapsible.open { display: block; }
+
+  /* RESULT SECTION */
+  .result-card {
+    background: var(--cream2);
+    border: 2px solid var(--orange-mid);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.25rem;
+    box-shadow: var(--shadow-md);
+  }
+  .result-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--brown);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px dashed var(--orange-mid);
+  }
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .metric {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+  .metric-lbl {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .metric-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .metric.highlight {
+    border-color: var(--orange);
+    background: var(--orange-light);
+  }
+  .metric.highlight .metric-lbl { color: var(--brown-light); }
+  .metric.highlight .metric-val { color: var(--brown); font-size: 20px; }
+  .metric.success {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+  .metric.success .metric-lbl { color: #2E7D32; }
+  .metric.success .metric-val { color: #1B5E20; font-size: 20px; }
+  .metric.warning-m {
+    border-color: var(--yellow);
+    background: var(--yellow-light);
+  }
+  .metric.warning-m .metric-lbl { color: #F57F17; }
+  .metric.warning-m .metric-val { color: #E65100; }
+
+  .output-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+  }
+  @media (max-width: 480px) {
+    .breakdown-grid, .output-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 20px;
+    margin-left: 5px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-orange { background: var(--orange-light); color: var(--brown); }
+  .badge-yellow { background: var(--yellow-light); color: #7B5800; }
+
+  /* QUOTE WATERMARK */
+  .meme-quote {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    opacity: 0.5;
+    margin: 0.5rem 0;
+    font-style: italic;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    border-color: var(--brown-light);
+    box-shadow: 0 3px 0 var(--brown-light);
+  }
+  .btn-primary:hover { box-shadow: 0 4px 0 var(--brown-light); transform: translateY(-1px); }
+  .btn-ghost {
+    background: #fff;
+    color: var(--brown);
+    border-color: var(--border);
+    box-shadow: 0 2px 0 var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--orange-mid); }
+
+  /* FOOTER */
+  .site-footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .site-footer span { font-size: 1rem; }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background: #fff !important; padding: 0; }
+    .site-header { background: #FF7A2F !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .btn-row, .no-print { display: none !important; }
+    .card, .result-card {
+      box-shadow: none !important;
+      break-inside: avoid;
+    }
+    .main { margin: 0 auto; }
+    .metric { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .metric.highlight, .metric.success, .metric.warning-m {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-cats">
+    <span>🐱</span>
+    <span>😼</span>
+    <span>🐾</span>
+  </div>
+  <div class="site-title">Tramiterío</div>
+  <div class="site-subtitle">Calculadora de costos de impresión 3D · ¿cuánto sale esto, flaco?</div>
+</header>
+
+<main class="main">
+
+  <!-- GASTOS FIJOS -->
+  <div class="card">
+    <div class="card-meme">🐱💸</div>
+    <div class="card-header">
+      <span class="card-icon">⚙️</span>
+      <span class="card-title">Gastos fijos</span>
+    </div>
+    <div class="g2">
+      <div class="field">
+        <label>Precio filamento ($/kg)</label>
+        <input type="number" id="precio_kg" value="19000" min="0">
+      </div>
+      <div class="field">
+        <label>Precio kWh ($)</label>
+        <input type="number" id="precio_kwh" value="140" min="0">
+      </div>
+      <div class="field">
+        <label>Consumo real (W/hora)</label>
+        <input type="number" id="consumo_w" value="130" min="0">
+      </div>
+      <div class="field">
+        <label>Insumos adicionales ($)</label>
+        <input type="number" id="insumos" value="0" min="0">
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="toggle-row">
+      <input type="checkbox" id="chk_desgaste">
+      <label for="chk_desgaste">Incluir desgaste de máquina</label>
+      <span class="cat-label">🔧</span>
+    </div>
+    <div id="d_desgaste" class="collapsible">
+      <div class="g3">
+        <div class="field">
+          <label>Horas de vida útil</label>
+          <input type="number" id="vida_horas" value="2880" min="1">
+        </div>
+        <div class="field">
+          <label>Precio repuesto ($)</label>
+          <input type="number" id="precio_repuesto" value="150000" min="0">
+        </div>
+        <div class="field">
+          <label>Margen de error (%)</label>
+          <input type="number" id="margen_maq" value="30" min="0" max="100">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIEZA -->
+  <div class="card">
+    <div class="card-meme">🐈📦</div>
+    <div class="card-header">
+      <span class="card-icon">🖨️</span>
+      <span class="card-title">Pieza</span>
+    </div>
+    <div class="g3">
+      <div class="field">
+        <label>Horas de impresión</label>
+        <input type="number" id="horas" value="13" min="0">
+      </div>
+      <div class="field">
+        <label>Minutos de impresión</label>
+        <input type="number" id="minutos" value="15" min="0" max="59">
+      </div>
+      <div class="field">
+        <label>Gramos de filamento</label>
+        <input type="number" id="gramos" value="456" min="0">
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- POST-PROCESADO -->
+    <div class="toggle-row">
+      <input type="checkbox" id="chk_post">
+      <label for="chk_post">Post-procesado (lijado, soporte, pintura…)</label>
+      <span class="cat-label">🎨</span>
+    </div>
+    <div id="d_post" class="collapsible">
+      <div class="g2">
+        <div class="field">
+          <label>Horas de post-procesado</label>
+          <input type="number" id="post_horas" value="1" min="0" step="0.5">
+        </div>
+        <div class="field">
+          <label>Costo por hora ($)</label>
+          <input type="number" id="post_tarifa" value="2000" min="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- FALLA -->
+    <div class="toggle-row">
+      <input type="checkbox" id="chk_falla">
+      <label for="chk_falla">Cubrir tasa de falla / reimprimir</label>
+      <span class="cat-label">😿</span>
+    </div>
+    <div id="d_falla" class="collapsible">
+      <div class="g2">
+        <div class="field">
+          <label>% de piezas que fallan</label>
+          <input type="number" id="pct_falla" value="15" min="0" max="100">
+        </div>
+        <div class="field" style="justify-content:flex-end;">
+          <label>&nbsp;</label>
+          <div style="font-size:12px;color:var(--text-muted);padding:8px 0;font-weight:600;">
+            💡 Si 15% falla, cada pieza exitosa absorbe ese costo
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRECIO DE VENTA -->
+  <div class="card">
+    <div class="card-meme">😺💰</div>
+    <div class="card-header">
+      <span class="card-icon">🏷️</span>
+      <span class="card-title">Precio de venta</span>
+    </div>
+    <div class="g2">
+      <div class="field">
+        <label>Ganancia sobre costo (%)</label>
+        <input type="number" id="pct_ganancia" value="50" min="0">
+      </div>
+      <div class="field">
+        <label>Tipo de cliente</label>
+        <select id="tipo_cliente">
+          <option value="0">Particular (sin descuento)</option>
+          <option value="10">Cliente frecuente (−10%)</option>
+          <option value="20">Mayorista (−20%)</option>
+          <option value="custom">Descuento personalizado…</option>
+        </select>
+      </div>
+      <div class="field" id="f_desc_custom" style="display:none">
+        <label>Descuento personalizado (%)</label>
+        <input type="number" id="desc_custom" value="15" min="0" max="100">
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- URGENCIA -->
+    <div class="toggle-row">
+      <input type="checkbox" id="chk_urgencia">
+      <label for="chk_urgencia">Recargo por urgencia</label>
+      <span class="cat-label">🚨</span>
+    </div>
+    <div id="d_urgencia" class="collapsible">
+      <div class="g2">
+        <div class="field">
+          <label>Recargo sobre precio final (%)</label>
+          <input type="number" id="pct_urgencia" value="25" min="0">
+        </div>
+        <div class="field" style="justify-content:flex-end;">
+          <label>&nbsp;</label>
+          <div style="font-size:12px;color:var(--text-muted);padding:8px 0;font-weight:600;">
+            🐱 "para mañana" = se cobra, amigo
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="result-card" id="result-card">
+    <div class="result-title">
+      <span>😸</span>
+      <span>Resultado</span>
+    </div>
+
+    <div class="breakdown-grid" id="breakdown"></div>
+
+    <div class="meme-quote" id="meme-quote"></div>
+
+    <div class="output-grid" id="output_grid"></div>
+
+    <div class="btn-row no-print">
+      <button class="btn btn-ghost" onclick="resetForm()">🔄 Resetear</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Descargar / Imprimir PDF</button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <span>🐾</span> Tramiterío · Calculadora de impresión 3D · Todo lo que no quieras calcular a mano <span>🐾</span>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const n = id => parseFloat($(id)?.value) || 0;
+
+const fmt = v => '$\u00A0' + Math.round(v).toLocaleString('es-AR');
+const pct = v => (Math.round(v * 10) / 10).toFixed(1) + '%';
+
+const memeQuotes = [
+  '😿 "esto me va a costar la felicidad" — gato calculando',
+  '😼 viable. mínimamente viable, pero viable.',
+  '🐱 el gato aprueba este precio',
+  '😹 ¡que no te cobren de menos, bb!',
+  '🙀 ESTE PRECIO ES TUYO Y DE NADIE MÁS',
+  '😾 el margen de ganancia es el único amigo real',
+  '🐈 imprimir cuesta, pero la reputación también',
+  '😺 calculado con amor y con filamento ABS',
+];
+
+function toggleSection(chkId, panelId) {
+  $(chkId).addEventListener('change', function () {
+    $(panelId).classList.toggle('open', this.checked);
+    calc();
+  });
+}
+
+toggleSection('chk_desgaste', 'd_desgaste');
+toggleSection('chk_post', 'd_post');
+toggleSection('chk_falla', 'd_falla');
+toggleSection('chk_urgencia', 'd_urgencia');
+
+$('tipo_cliente').addEventListener('change', function () {
+  $('f_desc_custom').style.display = this.value === 'custom' ? 'block' : 'none';
+  calc();
+});
+
+function metricHTML(lbl, val, sub, cls, badge) {
+  const badgeHTML = badge ? `<span class="badge badge-${badge.color}">${badge.text}</span>` : '';
+  return `<div class="metric ${cls || ''}">
+    <div class="metric-lbl">${lbl}${badgeHTML}</div>
+    <div class="metric-val">${val}</div>
+    ${sub ? `<div class="metric-sub">${sub}</div>` : ''}
+  </div>`;
+}
+
+function calc() {
+  const tiempoH = n('horas') + n('minutos') / 60;
+
+  const c_filamento = (n('gramos') / 1000) * n('precio_kg');
+  const c_energia = (n('consumo_w') / 1000) * tiempoH * n('precio_kwh');
+  const c_insumos = n('insumos');
+
+  let c_desgaste = 0;
+  if ($('chk_desgaste').checked && n('vida_horas') > 0) {
+    const base = (n('precio_repuesto') / n('vida_horas')) * tiempoH;
+    c_desgaste = base * (1 + n('margen_maq') / 100);
+  }
+
+  let c_post = 0;
+  if ($('chk_post').checked) c_post = n('post_horas') * n('post_tarifa');
+
+  const costo_base = c_filamento + c_energia + c_insumos + c_desgaste + c_post;
+
+  let c_falla = 0;
+  if ($('chk_falla').checked) {
+    const pf = n('pct_falla') / 100;
+    if (pf > 0 && pf < 1) c_falla = costo_base * (pf / (1 - pf));
+  }
+
+  const costo_total = costo_base + c_falla;
+
+  const ganancia_pct = n('pct_ganancia') / 100;
+  const precio_lista = costo_total * (1 + ganancia_pct);
+
+  const sel = $('tipo_cliente').value;
+  const desc_pct = sel === 'custom' ? n('desc_custom') / 100 : parseFloat(sel) / 100;
+  const precio_con_descuento = precio_lista * (1 - desc_pct);
+
+  let recargo_urgencia = 0;
+  if ($('chk_urgencia').checked) recargo_urgencia = precio_con_descuento * (n('pct_urgencia') / 100);
+
+  const precio_final = precio_con_descuento + recargo_urgencia;
+  const ganancia_real = precio_final - costo_total;
+  const margen_real = precio_final > 0 ? (ganancia_real / precio_final) * 100 : 0;
+
+  // DESGLOSE
+  let rows = [
+    metricHTML('Filamento', fmt(c_filamento), null),
+    metricHTML('Energía eléctrica', fmt(c_energia), null),
+  ];
+  if (c_insumos > 0) rows.push(metricHTML('Insumos', fmt(c_insumos), null));
+  if ($('chk_desgaste').checked) rows.push(metricHTML('Desgaste máquina', fmt(c_desgaste), null, '', {color:'orange', text:'extra'}));
+  if ($('chk_post').checked) rows.push(metricHTML('Post-procesado', fmt(c_post), null, '', {color:'orange', text:'extra'}));
+  if ($('chk_falla').checked) rows.push(metricHTML('Cobertura fallas ('+n('pct_falla')+'%)', fmt(c_falla), null, '', {color:'yellow', text:'riesgo'}));
+
+  const subHora = tiempoH > 0 ? fmt(costo_total / tiempoH) + ' / hora' : '';
+  rows.push(metricHTML('Costo total', fmt(costo_total), subHora, 'warning-m'));
+
+  $('breakdown').innerHTML = rows.join('');
+
+  // MEME QUOTE
+  const qi = Math.floor(Math.random() * memeQuotes.length);
+  $('meme-quote').textContent = memeQuotes[qi];
+
+  // SALIDA
+  let out = [];
+  out.push(metricHTML('Precio lista', fmt(precio_lista), '+' + n('pct_ganancia') + '% sobre costo'));
+  if (desc_pct > 0) {
+    out.push(metricHTML('Con descuento (−' + Math.round(desc_pct * 100) + '%)', fmt(precio_con_descuento), sel !== 'custom' ? $('tipo_cliente').options[$('tipo_cliente').selectedIndex].text : 'personalizado'));
+  }
+  if ($('chk_urgencia').checked) {
+    out.push(metricHTML('Recargo urgencia (+' + n('pct_urgencia') + '%)', fmt(recargo_urgencia), null));
+  }
+  out.push(metricHTML('Precio de venta final', fmt(precio_final), null, 'highlight'));
+  out.push(metricHTML('Ganancia neta', fmt(ganancia_real), 'Margen: ' + pct(margen_real), 'success'));
+
+  $('output_grid').innerHTML = out.join('');
+}
+
+function resetForm() {
+  ['precio_kg','precio_kwh','consumo_w','insumos','vida_horas','precio_repuesto',
+   'margen_maq','horas','minutos','gramos','post_horas','post_tarifa','pct_falla',
+   'pct_ganancia','desc_custom','pct_urgencia'].forEach(id => {
+    const defaults = {
+      precio_kg:19000, precio_kwh:140, consumo_w:130, insumos:0,
+      vida_horas:2880, precio_repuesto:150000, margen_maq:30,
+      horas:13, minutos:15, gramos:456,
+      post_horas:1, post_tarifa:2000, pct_falla:15,
+      pct_ganancia:50, desc_custom:15, pct_urgencia:25
+    };
+    if ($(id)) $(id).value = defaults[id] ?? 0;
+  });
+  ['chk_desgaste','chk_post','chk_falla','chk_urgencia'].forEach(id => {
+    if ($(id)) $(id).checked = false;
+  });
+  ['d_desgaste','d_post','d_falla','d_urgencia'].forEach(id => {
+    if ($(id)) $(id).classList.remove('open');
+  });
+  $('tipo_cliente').value = '0';
+  $('f_desc_custom').style.display = 'none';
+  calc();
+}
+
+document.querySelectorAll('input[type="number"], select').forEach(el => el.addEventListener('input', calc));
+calc();
+</script>
+</body>
+</html>
